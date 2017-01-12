@@ -1,5 +1,17 @@
-%crop 
 function Crop = crop(Data)
+%crop 
 Crop = Data;
-Crop(:,1,:) =[];
-Crop(:,end-3:end,:) =[];
+temp = [];
+for i = 1:length(Crop(:,1,1))
+    if ~sum(any(Crop(i,:,:)))
+        temp = [temp i];
+    end
+end
+Crop(temp,:,:) =[];
+temp = [];
+for i = 1:length(Crop(1,:,1))
+    if ~sum(any(Crop(:,i,:)))
+        temp = [temp i];
+    end
+end
+Crop(:,temp,:) =[];

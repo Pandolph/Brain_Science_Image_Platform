@@ -1,5 +1,5 @@
 % input tiff, choose one of the tif pictures  
-function [Crop, Bi] = TiffInput(num_hist,bi_threshold,filter_num,filter_size)
+function [Crop, Bi] = TiffInput(num_hist,bi_threshold,filter_num,filter_size,bin)
 tic
 [~,PathName] = uigetfile('*.tif','Select the file');
 Files = dir(fullfile(PathName,'*.tif'));
@@ -12,10 +12,10 @@ for k = 1:length(Files(:,1))
     Data(:,:,k) = rgb2gray(tif);
 end
 Crop = crop(Data);
-mydisplay(Crop);
+mydisplay(Crop,bin);
 outHist = HistMatch(Crop,num_hist);
-mydisplay(outHist);
+mydisplay(outHist,bin);
 Col = ColumnMatch(outHist);
-mydisplay(Col);
+mydisplay(Col,bin);
 Bi = MeanBi(Col,bi_threshold,filter_num,filter_size);
 toc

@@ -2,7 +2,7 @@ function outHist = HistMatch(Crop,num)
 % RawData is the data and num is the matched group
 % Because the maxmum of all slices is almost the same, so we use im2 = second/max(second(:))
 
-RawData = Crop;
+RawData = Crop+1;
 outHist = ones(length(RawData(:,1,1)),length(RawData(1,:,1)),length(RawData(1,1,:)));
 second = RawData(:,:,num);
 maxs = max(second(:));
@@ -25,7 +25,9 @@ for i = 1:length(RawData(1,1,:))
     %// Now apply the mapping to get first image to make
     %// the image look like the distribution of the second image
     %first means changing first to second, out is the first data in second histogram
+    
     out = M(first); % pay attention to this kind of transformation! excellent!
+    
     outHist(:,:,i) = out;
     
     
