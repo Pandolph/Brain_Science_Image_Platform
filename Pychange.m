@@ -1,5 +1,6 @@
 function [train_data, train_labels] = Pychange(imsize,order,str1,str2)
 % image size must be odd
+% Pychange(3,1,'CellCrop.nii','ManualCell.nii');
 temp = load_nii(str1);
 CellCrop = temp.img;
 length = size(CellCrop,1)*size(CellCrop,2);

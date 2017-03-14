@@ -1,5 +1,5 @@
 function BiVessel = BloodVessel(data,thresh,size)
-tic
+
 %thresh = [0.01 0.5];
 %size = 6;
 %figure;imshow(data(:,:,1),[]);
@@ -14,4 +14,3 @@ I = imdilate(e.edge,se);
 se = strel(shape,size);
 BiVessel = imerode(I,se);
 %figure;imshow(BiVessel(:,:,1));
-toc
