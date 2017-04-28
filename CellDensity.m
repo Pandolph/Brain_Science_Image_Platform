@@ -1,8 +1,8 @@
 % compute the cell density around vessel
-function [distance2d, distance3d] = CellDensity(vessel1,vessel2,cell,h)
+function [distance2d, distance3d] = CellDensity(vessel,cell,h)
 CentroidData = CentroidDetec(cell);
 figure;scatter3(CentroidData(:,1),CentroidData(:,2),CentroidData(:,3));axis equal;
-data = CombineVessel(vessel1, vessel2, cell);
+data = vessel;
 figure;scatter3(data(1:end,1),data(1:end,2),data(1:end,3));axis equal
 
 %3d distance

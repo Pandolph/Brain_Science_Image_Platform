@@ -1,6 +1,8 @@
-function cellHist = CellHistogram(cell)
+function cellHist = CellHistogram(cell,x,y,z,num)
 Centroid = CentroidDetec(cell);
-figure;cellHist = hist(Centroid(:,3),round(max(Centroid(:,3)))+1);
-figure; plot(cellHist);
-xlswrite('cellHist.xlsx',cellHist);
+temp = round(max(Centroid(:,3))/2)+1;
+cellHist = hist(Centroid(:,3),temp);
 
+%still need the x y z data to improve
+
+xlswrite('cellHist.xlsx',cellHist);
