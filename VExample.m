@@ -3,24 +3,28 @@
 % in the selection part, some hidden tiff files may cause error, so delete those hidden files
 
 %% Processing of blood vessel
-Crop = TiffInput('part');
-num_hist = 1; % the slice for histmatch
-outHist = HistMatch(Crop,num_hist);figure;imshow(outHist(:,:,1),[])
-%Col = ColumnMatch(outHist);
+Crop = TiffInput('all');
+num_hist = 10; % the slice for histmatch
+x = 9;
+outHist = HistMatch(Crop,num_hist);figure;imshow(outHist(:,:,x),[])
+Col = ColumnMatch(outHist);figure;imshow(Col(:,:,x),[])
 filter_size =5; % the size of filer in the preprosessing to denoise
 filter_num =1; % how many times the filter is applied
-bi_threshold = 0.20; %the threshhold of binarization, larger means fewer area left
-Bi = MeanBi(outHist,bi_threshold,filter_num,filter_size);figure;imshow(Bi(:,:,1),[])
+bi_threshold = 0.1; %the threshhold of binarization, larger means fewer area left
+Bi = MeanBi(Col,bi_threshold,filter_num,filter_size);figure;imshow(Bi(:,:,x),[])
 
-thresh_canny = [0.1 0.4]; %lower than low threshold means not edge, higher than high threshold means edge
-strel_size = 7; % morphology element size
-vessel = BloodVessel(Bi,thresh_canny,strel_size);figure;imshow(vessel(:,:,1),[])
+% vessel = logical(Bi);
 
 % simplify preprocessing for large dataset
 BiVessel = bwareaopen(Bi,40,8);
-se = strel('disk',4);
+se = strel('disk',7);
 I = imdilate(BiVessel,se);
-vessel = imerode(I,se);figure;imshow(vessel(:,:,1),[])
+vessel = imerode(I,se);figure;imshow(vessel(:,:,x),[])
+
+% difficult pictures
+thresh_canny = [0.1 0.4]; %lower than low threshold means not edge, higher than high threshold means edge
+strel_size = 7; % morphology element size
+vessel = BloodVessel(Bi,thresh_canny,strel_size);figure;imshow(vessel(:,:,x),[])
 
 save('vessel.mat','vessel')
 [vPrecison,vRecall,vFmeasure] = AreaCoincidence(manualvessel48,vessel); 
@@ -28,7 +32,6 @@ bin = 60; % display parameter
 mydisplay(Crop,bin);
 mydisplay(outHist,bin);
 mydisplay(Col,bin);
-
 
 save_nii(make_nii(uint16(vessel)),'vessel.nii');  %change 3d mat data to nii
 save_nii(make_nii(uint16(Crop)),'vesselCrop.nii');
@@ -39,26 +42,27 @@ data = CombineVessel(vessel1, vessel2, cell);
 % vessel volume
 volper = VolPer(vessel); % volume percentage
 
-load('C:\Users\Administrator\CloudStation\celldata\NCclaudin5cd206iba1_0.99x0.99x2_4\vessel.mat')
+load('C:\Users\Administrator\CloudStation\Vessel\vessel_1024x1024_0.78umx0.78umx2um\vessel.mat')
 % expand and change
-x = 0.62;
-z = 1.38;
+x = 0.78;
+z = 2;
 h = z/x;
-[real,squeeze] = expand(vessel,h);
-TiffChange(real,'vessel.tif'); %change 3d mat data to tiff file
-
+squeeze = floor(h)/h;
+real = expand(vessel,h);
+%TiffChange(real,'vessel.tif'); %change 3d mat data to tiff file
 
 sample = vessel;
 % vessel
-[length, dia] = lenAnddia('vessel.tif_x810_y10_z196_app2.swc',squeeze);
+[length, dia] = lenAnddia('vessel.tif_x323_y10_z28_app2.swc',squeeze);
 realDiaAverage = x*sqrt(sum(length.*(dia.^2))/sum(length));
-micro = find(dia(:,1)<6/x);
 LenVol = x*sum(length)*10^(-6)/(size(sample,1)*size(sample,2)*size(sample,3)*x^2*z*10^(-9));
+percentage = sum((pi/4)*length.*(dia).^2)/(size(real,1)*size(real,2)*size(real,3)/(squeeze^3));%recheck the volume percentage
+
+%micro vessel
+micro = find(dia(:,1)<6/x);
+MicroDiaAve =  x*sqrt(sum(length(micro).*(dia(micro).^2))/sum(length(micro)));
 MicroDensity = x*sum(length(micro))*10^(-6)/(size(sample,1)*size(sample,2)*size(sample,3)*x^2*z*10^(-9));
 MicroVolume = sum((pi/4)*length(micro).*(dia(micro)).^2)/(size(real,1)*size(real,2)*size(real,3)/(squeeze^3));
-
-%recheck the volume percentage
-percentage = sum((pi/4)*length.*(dia).^2)/(size(real,1)*size(real,2)*size(real,3)/(squeeze^3));
 
 %vessel histogram
 matHist = ones(12,2);

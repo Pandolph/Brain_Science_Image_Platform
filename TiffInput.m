@@ -13,7 +13,7 @@ elseif strcmp(channel,  'part')
     answer = inputdlg(prompt,dlg_title,num_lines,defaultans);
     Files = Files1([str2num(answer{1,1}):str2num(answer{2,1})],1);
 else
-    Files = dir(fullfile(PathName,['*',channel,'.tif']));
+    Files = dir(fullfile(PathName,['*',num2str(channel),'.tif']));
 end
 place = [PathName,Files(1).name];
 tif = imread(place); % z = 156 slices, x = 437 or tif(:,1,1), y = 1379 or tif(1,:,1)
@@ -24,4 +24,6 @@ for k = 1:sliceSize
     tif = imread(place);
     Data(:,:,k) = tif(:,:,find(mean(mean(tif,1),2)));
 end
-Crop = crop(Data);
+
+Crop = Data;
+%Crop = crop(Data);
